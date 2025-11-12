@@ -1,23 +1,41 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 // This class doesn't need a CameraSwitcherOptim.cs script
 // Initial commit
 public class PlayerController : MonoBehaviour
 {
-    private float speed = 20.0f;
-    private float turnSpeed = 45.0f;
+    [SerializeField] private float speed = 20.0f;
+    [SerializeField] private float turnSpeed = 45.0f;
+    [SerializeField] private string inputID;
+    
     private float horizontalInput;
     private float forwardInput;
+    private GameObject finishPoint;
 
+    public TextMeshProUGUI winText;
     public Camera mainCamera;
     public Camera hoodCamera;
     public KeyCode switchKey;
-    public string inputID;
+    
+    
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        finishPoint = GameObject.Find("Finish");
+        finishPoint.SetActive(true);
+        if(inputID == "1")
+        {
+            speed += MainManager.Instance.playerOneWins;
+            winText.text = "Wins: " + MainManager.Instance.playerOneWins; 
+        }
+        else if (inputID == "2")
+        {
+            speed += MainManager.Instance.playerTwoWins;
+            winText.text = "Wins: " + MainManager.Instance.playerTwoWins;
+        }
     }
 
     // Update is called once per frame
@@ -38,5 +56,26 @@ public class PlayerController : MonoBehaviour
             hoodCamera.enabled = !hoodCamera.enabled;
         }
         
+        // Restart Game
+        if(Input.GetKeyDown(KeyCode.R))
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Finish"))
+        {
+            if(inputID == "1")
+            {
+                MainManager.Instance.playerOneWins ++;
+                winText.text = "Wins: " + MainManager.Instance.playerOneWins; 
+            }
+            else if (inputID == "2")
+            {
+                MainManager.Instance.playerTwoWins ++;
+                winText.text = "Wins: " + MainManager.Instance.playerTwoWins;
+            }
+            other.gameObject.SetActive(false);
+        }
     }
 }
