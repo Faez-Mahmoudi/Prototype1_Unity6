@@ -1,6 +1,7 @@
 using UnityEngine;
 
 // This class doesn't need a CameraSwitcherOptim.cs script
+// Initial commit
 public class PlayerController : MonoBehaviour
 {
     private float speed = 20.0f;
