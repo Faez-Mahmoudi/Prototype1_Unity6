@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine.SceneManagement;
 
 // This class doesn't need a CameraSwitcherOptim.cs script
-// Initial commit
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed = 20.0f;
@@ -13,6 +12,8 @@ public class PlayerController : MonoBehaviour
     private float horizontalInput;
     private float forwardInput;
     private GameObject finishPoint;
+    public GameObject restartText;
+    public GameObject cameraText;
 
     public TextMeshProUGUI winText;
     public Camera mainCamera;
@@ -25,7 +26,11 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         finishPoint = GameObject.Find("Finish");
+
         finishPoint.SetActive(true);
+        restartText.SetActive(false);
+        cameraText.SetActive(true);
+
         if(inputID == "1")
         {
             speed += MainManager.Instance.playerOneWins;
@@ -59,6 +64,17 @@ public class PlayerController : MonoBehaviour
         // Restart Game
         if(Input.GetKeyDown(KeyCode.R))
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        // Restart player position
+        if(transform.position.y < -2)
+        {
+            if(inputID == "1")
+                transform.position = new Vector3(-5, 0, -6);
+            if(inputID == "2")
+                transform.position = new Vector3(4, 0, -6);
+
+            transform.rotation = new Quaternion();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -76,6 +92,8 @@ public class PlayerController : MonoBehaviour
                 winText.text = "Wins: " + MainManager.Instance.playerTwoWins;
             }
             other.gameObject.SetActive(false);
+            restartText.SetActive(true);
+            cameraText.SetActive(false);
         }
     }
 }
