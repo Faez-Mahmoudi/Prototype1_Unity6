@@ -11,11 +11,15 @@ public class PlayerController : MonoBehaviour
     
     private float horizontalInput;
     private float forwardInput;
+    private float speedometer;
+    private Rigidbody playerRb;
     private GameObject finishPoint;
     public GameObject restartText;
     public GameObject cameraText;
+    public GameObject winText;
 
-    public TextMeshProUGUI winText;
+    public TextMeshProUGUI winScoreText;
+    public TextMeshProUGUI speedText;
     public Camera mainCamera;
     public Camera hoodCamera;
     public KeyCode switchKey;
@@ -25,21 +29,23 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        playerRb = GetComponent<Rigidbody>();
         finishPoint = GameObject.Find("Finish");
 
         finishPoint.SetActive(true);
         restartText.SetActive(false);
+        winText.SetActive(false);
         cameraText.SetActive(true);
 
         if(inputID == "1")
         {
             speed += MainManager.Instance.playerOneWins;
-            winText.text = "Wins: " + MainManager.Instance.playerOneWins; 
+            winScoreText.text = "Wins: " + MainManager.Instance.playerOneWins; 
         }
         else if (inputID == "2")
         {
             speed += MainManager.Instance.playerTwoWins;
-            winText.text = "Wins: " + MainManager.Instance.playerTwoWins;
+            winScoreText.text = "Wins: " + MainManager.Instance.playerTwoWins;
         }
     }
 
@@ -48,6 +54,10 @@ public class PlayerController : MonoBehaviour
     {
         horizontalInput = Input.GetAxis("Horizontal" + inputID);
         forwardInput = Input.GetAxis("Vertical" + inputID);
+
+        // Speedometer(need to be repaired)
+        speedometer = Mathf.RoundToInt(playerRb.linearVelocity.magnitude * 3.6f);
+        speedText.text = "Speed: " + speedometer;
 
         // Move the vehicle forward
         transform.Translate(Vector3.forward * Time.deltaTime * forwardInput * speed);
@@ -84,16 +94,24 @@ public class PlayerController : MonoBehaviour
             if(inputID == "1")
             {
                 MainManager.Instance.playerOneWins ++;
-                winText.text = "Wins: " + MainManager.Instance.playerOneWins; 
+                winScoreText.text = "Wins: " + MainManager.Instance.playerOneWins; 
             }
             else if (inputID == "2")
             {
                 MainManager.Instance.playerTwoWins ++;
-                winText.text = "Wins: " + MainManager.Instance.playerTwoWins;
+                winScoreText.text = "Wins: " + MainManager.Instance.playerTwoWins;
             }
             other.gameObject.SetActive(false);
             restartText.SetActive(true);
+            winText.SetActive(true);
             cameraText.SetActive(false);
         }
+
+        if (other.gameObject.CompareTag("Powerup"))
+        {
+            speed += 5;
+            other.gameObject.SetActive(false);
+        }
+
     }
 }
