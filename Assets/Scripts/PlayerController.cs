@@ -8,28 +8,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 20.0f;
     [SerializeField] private float turnSpeed = 45.0f;
     [SerializeField] private string inputID;
-    
-    private float horizontalInput;
-    private float forwardInput;
-    private float speedometer;
-    private Rigidbody playerRb;
-    private GameObject finishPoint;
-    public GameObject restartText;
-    public GameObject cameraText;
-    public GameObject winText;
+    [SerializeField] private KeyCode switchKey;
 
-    public TextMeshProUGUI winScoreText;
-    public TextMeshProUGUI speedText;
-    public Camera mainCamera;
-    public Camera hoodCamera;
-    public KeyCode switchKey;
-    
-    
+    private float speedometer;
+    private GameObject finishPoint;
+
+    [Header("UI")]
+    [SerializeField] private GameObject restartText;
+    [SerializeField] private GameObject cameraText;
+    [SerializeField] private GameObject winText;
+    [SerializeField] private TextMeshProUGUI winScoreText;
+    [SerializeField] private TextMeshProUGUI speedText;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private Camera hoodCamera;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        playerRb = GetComponent<Rigidbody>();
         finishPoint = GameObject.Find("Finish");
 
         finishPoint.SetActive(true);
@@ -52,11 +47,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        horizontalInput = Input.GetAxis("Horizontal" + inputID);
-        forwardInput = Input.GetAxis("Vertical" + inputID);
+        float horizontalInput = Input.GetAxis("Horizontal" + inputID);
+        float forwardInput = Input.GetAxis("Vertical" + inputID);
 
-        // Speedometer(need to be repaired)
-        speedometer = Mathf.RoundToInt(playerRb.linearVelocity.magnitude * 3.6f);
+        // Speedometer
+        speedometer = Mathf.RoundToInt(forwardInput * speed * 3.6f);
         speedText.text = "Speed: " + speedometer;
 
         // Move the vehicle forward
@@ -112,6 +107,5 @@ public class PlayerController : MonoBehaviour
             speed += 5;
             other.gameObject.SetActive(false);
         }
-
     }
 }
